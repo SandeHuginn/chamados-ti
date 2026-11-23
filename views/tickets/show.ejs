@@ -13,7 +13,7 @@
   </div>
   <div class="header-actions">
     <a href="/tickets/<%= ticket.id %>/edit" class="btn btn-secondary" id="ticket-edit"><%- icon('edit', 16) %> Editar</a>
-    <form method="POST" action="/tickets/<%= ticket.id %>?_method=DELETE" data-confirm="Excluir definitivamente o chamado <%= ticket.protocolo %>?">
+    <form method="POST" action="/tickets/<%= ticket.id %>?_method=DELETE" data-confirm="Excluir definitivamente o chamado <%= ticket.protocolo %>?" class="somente-admin" hidden>
       <button type="submit" class="btn btn-danger" id="ticket-delete"><%- icon('trash', 16) %> Excluir</button>
     </form>
   </div>
@@ -67,7 +67,7 @@
   </div>
 
   <aside class="detail-side">
-    <section class="card">
+    <section class="card somente-tecnico" hidden>
       <h2 class="form-section"><%- icon('zap') %> Ações rápidas</h2>
       <form method="POST" action="/tickets/<%= ticket.id %>/quick?_method=PATCH" id="quick-form">
         <div class="field">

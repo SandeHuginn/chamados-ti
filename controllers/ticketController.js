@@ -41,6 +41,9 @@ async function findOr404(id, res, opts = {}) {
 exports.index = async (req, res) => {
   const { q, status, prioridade, categoria, tecnico } = req.query;
   const where = {};
+  if (req.user.perfil === 'user') {
+  where.autorUid = req.user.uid;
+}
 
   if (q) {
     const like = { [Op.like]: `%${q}%` };
@@ -80,7 +83,20 @@ exports.new = async (req, res) => {
 
 // POST /tickets
 exports.create = async (req, res) => {
-  const data = pickTicket(req.body);
+  const data = {
+    ...pickTicket(req.body),
+    autorUid: req.user.uid,
+    autorNome: req.user.displayName || req.user.nome,
+    autorEmail: req.user.email,
+    status: 'aberto',
+    tecnicoResponsavel: null,
+  };
+  console.log('Autenticação recebida na criação:', {
+    temReqUser: Boolean(req.user),
+    temUid: Boolean(req.user?.uid),
+    temNome: Boolean(req.user?.displayName || req.user?.nome),
+    temEmail: Boolean(req.user?.email),
+  });
   try {
     const ticket = await Ticket.create(data);
     await Comment.create({
@@ -109,7 +125,15 @@ exports.show = async (req, res) => {
     include: [...include, { model: Comment, as: 'comentarios' }],
     order: [[{ model: Comment, as: 'comentarios' }, 'createdAt', 'ASC']],
   });
+
   if (!ticket) return;
+
+  if (req.user.perfil === 'user' && ticket.autorUid !== req.user.uid) {
+    return res.status(404).render('404', {
+      title: 'Chamado não encontrado',
+    });
+  }
+
   const { tecnicos } = await formOptions();
   res.render('tickets/show', { title: ticket.protocolo, ticket, tecnicos, errors: [] });
 };
@@ -169,6 +193,7 @@ exports.quickUpdate = async (req, res) => {
     const novo = technicianId ? await Technician.findByPk(technicianId) : null;
     historico.push(novo ? `Chamado atribuído a ${novo.nome}.` : 'Técnico responsável removido.');
     ticket.technicianId = novo ? novo.id : null;
+    ticket.tecnicoResponsavel = novo ? novo.nome : null;
   }
 
   if (!historico.length) {

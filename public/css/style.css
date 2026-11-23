@@ -601,3 +601,63 @@ time.muted { font-size: 12px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
+
+/* ---------- Sessão do usuário ---------- */
+.user-session {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#usuario-nome {
+  color: var(--text);
+  font-size: 14px;
+}
+
+#usuario-email {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.user-role {
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(124, 108, 255, 0.15);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 520px) {
+  .user-session {
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+  }
+}
+
+/* Respeita a ocultação dos elementos por perfil */
+.somente-admin[hidden],
+.somente-tecnico[hidden] {
+    display: none !important;
+}
+
+/* Oculta controles restritos enquanto o perfil é verificado */
+.verificando-perfil .somente-admin,
+.verificando-perfil .somente-tecnico {
+    display: none !important;
+}

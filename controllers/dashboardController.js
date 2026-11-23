@@ -3,6 +3,10 @@ const { Ticket, Technician, Category } = require('../models');
 const { STATUS, PRIORIDADES, STATUS_ATIVOS } = require('../config/constants');
 
 exports.index = async (req, res) => {
+  const filtroUsuario = req.user.perfil === 'user'
+  ? { autorUid: req.user.uid }
+  : {};
+
   // Contagem por status
   const porStatus = {};
   for (const s of Object.keys(STATUS)) {
@@ -26,13 +30,22 @@ exports.index = async (req, res) => {
 
   // Fila prioritária: crítica/alta ainda em aberto, mais antigos primeiro
   const prioritarios = await Ticket.findAll({
-    where: { prioridade: { [Op.in]: ['critica', 'alta'] }, status: { [Op.in]: STATUS_ATIVOS } },
+    where: {
+      ...filtroUsuario,
+      prioridade: { [Op.in]: ['critica', 'alta'] },
+      status: { [Op.in]: STATUS_ATIVOS },
+    },
     include,
     order: [['createdAt', 'ASC']],
     limit: 5,
   });
 
-  const recentes = await Ticket.findAll({ include, order: [['createdAt', 'DESC']], limit: 6 });
+  const recentes = await Ticket.findAll({
+    where: { ...filtroUsuario },
+    include,
+    order: [['createdAt', 'DESC']],
+    limit: 6,
+  });
 
   const semTecnico = await Ticket.count({
     where: { technicianId: null, status: { [Op.in]: STATUS_ATIVOS } },

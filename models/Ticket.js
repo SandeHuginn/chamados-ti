@@ -28,6 +28,31 @@ const Ticket = sequelize.define(
       allowNull: true,
       validate: { isEmail: { msg: 'E-mail do solicitante inválido.' } },
     },
+        emailSolicitante: {
+      type: DataTypes.STRING(120),
+      allowNull: true,
+      validate: { isEmail: { msg: 'E-mail do solicitante inválido.' } },
+    },
+    autorUid: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    autorNome: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    autorEmail: {
+      type: DataTypes.STRING(120),
+      allowNull: true,
+    },
+    tecnicoResponsavel: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      defaultValue: null,
+    },
+    setor: {
+      type: DataTypes.STRING(60),
+    },
     setor: {
       type: DataTypes.STRING(60),
     },

@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Cadastros</p>
+    <h1>Gestão de Usuários</h1>
+    <p class="subtitle">Gerencie as contas e os níveis de acesso do sistema.</p>
+  </div>
+</header>
+
+<div class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Usuários cadastrados</h2>
+      <p class="muted"><%= usuarios.length %> conta(s) encontrada(s).</p>
+    </div>
+  </div>
+
+  <% if (!usuarios.length) { %>
+    <div class="empty">
+      <h3>Nenhum usuário encontrado</h3>
+      <p>As contas cadastradas no Firebase aparecerão aqui.</p>
+    </div>
+  <% } else { %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Perfil</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach(function (usuario) { %>
+            <tr>
+              <td><%= usuario.nome || 'Não informado' %></td>
+              <td><%= usuario.email || 'Não informado' %></td>
+              <td><%= usuario.perfil || 'Não definido' %></td>
+              <td>
+                <form method="POST" action="/users/<%= usuario.uid %>">
+                  <input type="hidden" name="_method" value="PUT">
+
+                  <select name="perfil" required>
+                    <option value="user" <%= usuario.perfil === 'user' ? 'selected' : '' %>>Usuário</option>
+                    <option value="tecnico" <%= usuario.perfil === 'tecnico' ? 'selected' : '' %>>Técnico</option>
+                    <option value="admin" <%= usuario.perfil === 'admin' ? 'selected' : '' %>>Administrador</option>
+                  </select>
+
+                  <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

@@ -58,7 +58,7 @@
     </fieldset>
 
     <% if (isEdit) { %>
-      <div class="field">
+      <div class="field somente-tecnico" hidden>
         <label for="status">Status</label>
         <select id="status" name="status">
           <% Object.keys(STATUS).forEach(function (s) { %>

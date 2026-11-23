@@ -7,11 +7,15 @@ async function firebaseAuth(req, res, next) {
             .split(';')
             .find(cookie => cookie.trim().startsWith('session='));
 
-        if (!cookieSessao) {
-            return res.status(401).json({
-                erro: 'Autenticação necessária.',
-            });
+    if (!cookieSessao) {
+        if (req.accepts('html')) {
+            return res.redirect('/login');
         }
+
+        return res.status(401).json({
+            erro: 'Autenticação necessária.',
+        });
+    }
 
         // Recupera o valor do cookie
         const sessionCookie = decodeURIComponent(
@@ -49,6 +53,10 @@ async function firebaseAuth(req, res, next) {
 
     } catch (erro) {
         console.error('Erro na autenticação do Firebase:', erro);
+
+        if (req.accepts('html')) {
+            return res.redirect('/login');
+        }
 
         return res.status(401).json({
             erro: 'Sessão inválida ou expirada.',
